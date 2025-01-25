@@ -12,30 +12,30 @@ const data = {
       { "id": 8, "name": "pasta all'uovo", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
       { "id": 9, "name": "casarecce", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
       { "id": 10, "name": "paccheri", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
-      { "id": 11, "name": "taglierini al nero di seppia", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
+      { "id": 11, "name": "taglierini al nero di seppia", "type" : "fishy", "price": {"s": 6, "m":8, "l":10} },
       { "id": 12, "name": "ravioli", "type" : "filled", "price": {"s": 7, "m":9, "l":11} },
       { "id": 13, "name": "ravioli salame sant'olcese", "type" : "filled", "price": {"s": 7, "m":9, "l":11} },
       { "id": 14, "name": "ravioli salame e provola", "type" : "filled", "price": {"s": 7, "m":9, "l":11} },
       { "id": 15, "name": "ravioli zucca e arancia", "type" : "filled", "price": {"s": 7, "m":9, "l":11} },
       { "id": 16, "name": "ravioli vegani", "type" : "filled", "price": {"s": 7, "m":9, "l":11} },
       { "id": 17, "name": "ravioli di carne alla genovese", "type" : "filled", "price": {"s": 7, "m":9, "l":11} },
-      { "id": 18, "name": "ravioli al tartufo", "type" : "special", "price": {"s": 8, "m":10, "l":12} },
-      { "id": 19, "name": "pansoti fatti a mano", "type" : "special", "price": {"s": 8, "m":10, "l":12} },
-      { "id": 20, "name": "cappelletti fatti a mano", "type" : "special", "price": {"s": 8, "m":10, "l":12} },
+      { "id": 18, "name": "ravioli al tartufo", "type" : "filled", "price": {"s": 8, "m":10, "l":12} },
+      { "id": 19, "name": "pansoti fatti a mano", "type" : "filled", "price": {"s": 8, "m":10, "l":12} },
+      { "id": 20, "name": "cappelletti fatti a mano", "type" : "filled", "price": {"s": 8, "m":10, "l":12} },
       { "id": 21, "name": "le oege de ma", "type" : "special", "price": {"s": 8, "m":10, "l":12} },
       { "id": 22, "name": "lasagne al ragù", "type" : "lasagna", "price": {"s": 8, "m":8, "l":8} },
       { "id": 23, "name": "lasagne al pesto", "type" : "lasagna", "price": {"s": 8, "m":8, "l":8} }
     ],
   "sauces": [      
-        { "id": 1, "name": "pesto", "prob": 0.8 },
-        { "id": 2, "name": "pesto al mortaio", "prob": 0.6 },
-        { "id": 3, "name": "salsa di noci", "prob": 0.6 },
-        { "id": 4, "name": "ragù", "prob": 0.8 },
+        { "id": 1, "name": "pesto", "prob": 0.8, "excludedPastaTypes": ["filled","fishy"]},
+        { "id": 2, "name": "pesto al mortaio", "prob": 0.6,"excludedPastaTypes": ["filled","fishy"] },
+        { "id": 3, "name": "salsa di noci", "prob": 0.6, "excludedPastaTypes": ["fishy"]},
+        { "id": 4, "name": "ragù", "prob": 0.8, "excludedPastaTypes": ["fishy"]},
         { "id": 5, "name": "ragù di nocciole vegan", "prob": 0.2 },
         { "id": 6, "name": "arrabbiata", "prob": 0.6 },
-        { "id": 7, "name": "cacio e pepe", "prob": 0.7 },
+        { "id": 7, "name": "cacio e pepe", "prob": 0.7,"excludedPastaTypes": ["fishy"] },
         { "id": 8, "name": "burro e salvia", "prob": 0.6 },
-        { "id": 9, "name": "bottarga", "prob": 0.4 },
+        { "id": 9, "name": "bottarga", "prob": 0.4,"excludedPastaTypes": ["filled"] },
         { "id": 10, "name": "pomodoro e basilico", "prob": 0.6 },
         { "id": 11, "name": "crema di nocciole", "prob": 0.1 },
         { "id": 12, "name": "noce vegan", "prob": 0.3 },
@@ -59,7 +59,7 @@ function getRandomWeightedItem(array){
     for (const item of array) {
         accumulatedWeight += item.prob;
         if (random < accumulatedWeight) {
-            return array[item.id -1];
+            return item; // array[item.id -1];
         }
     }
 }
@@ -80,12 +80,38 @@ function prandomizePairing() {
   let cost = randomPasta.price[selectedSize];
 
   document.getElementById('price').innerText = `Costo: ${cost} €`
+  document.getElementById("p-randomizeButton").disabled = true;
+  document.getElementById("s-randomizeButton").disabled = false;
+
 }
 
 function srandomizePairing() {
-  const randomSauce = getRandomWeightedItem(data.sauces);  
-  const sresultDiv = document.getElementById('s-result');
-  sresultDiv.textContent =  capitalizeFirstLetter(`${randomSauce.name}`);
+    const pastaName = document.getElementById('p-result').innerHTML;
+    let pasta = getItemByName(pastaName, data.pasta);
+
+    let randomSauce = getRandomWeightedItem(data.sauces);  
+  
+    if(randomSauce.excludedPastaTypes != undefined){
+        
+        for(exclusion in randomSauce.excludedPastaTypes){
+            if(pasta.type == randomSauce.excludedPastaTypes[exclusion]){
+                do{
+                    randomSauce =  getRandomWeightedItem(data.sauces); 
+                }while(pasta.type == randomSauce.excludedPastaTypes[exclusion])
+            }
+        }
+    }
+
+  
+
+    const sresultDiv = document.getElementById('s-result');
+    sresultDiv.textContent =  capitalizeFirstLetter(`${randomSauce.name}`);
+    document.getElementById("s-randomizeButton").disabled = true;
+
+}
+
+function getItemByName(itemName,array){
+    return array.find((item) => item.name.toLowerCase() == itemName.toLowerCase());
 }
 
 function capitalizeFirstLetter(val) {
