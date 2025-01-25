@@ -1,0 +1,100 @@
+atLeastOneRadio();
+// JSON data containing pasta and sauce options
+const data = {
+  "pasta": [
+      { "id": 1, "name": "imperiali", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
+      { "id": 2, "name": "imperiali di ceci", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
+      { "id": 3, "name": "gnocchi", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
+      { "id": 4, "name": "taglierini", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
+      { "id": 5, "name": "trenette", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
+      { "id": 6, "name": "trofie", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
+      { "id": 7, "name": "torchiette", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
+      { "id": 8, "name": "pasta all'uovo", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
+      { "id": 9, "name": "casarecce", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
+      { "id": 10, "name": "paccheri", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
+      { "id": 11, "name": "taglierini al nero di seppia", "type" : "nonfilled", "price": {"s": 6, "m":8, "l":10} },
+      { "id": 12, "name": "ravioli", "type" : "filled", "price": {"s": 7, "m":9, "l":11} },
+      { "id": 13, "name": "ravioli salame sant'olcese", "type" : "filled", "price": {"s": 7, "m":9, "l":11} },
+      { "id": 14, "name": "ravioli salame e provola", "type" : "filled", "price": {"s": 7, "m":9, "l":11} },
+      { "id": 15, "name": "ravioli zucca e arancia", "type" : "filled", "price": {"s": 7, "m":9, "l":11} },
+      { "id": 16, "name": "ravioli vegani", "type" : "filled", "price": {"s": 7, "m":9, "l":11} },
+      { "id": 17, "name": "ravioli di carne alla genovese", "type" : "filled", "price": {"s": 7, "m":9, "l":11} },
+      { "id": 18, "name": "ravioli al tartufo", "type" : "special", "price": {"s": 8, "m":10, "l":12} },
+      { "id": 19, "name": "pansoti fatti a mano", "type" : "special", "price": {"s": 8, "m":10, "l":12} },
+      { "id": 20, "name": "cappelletti fatti a mano", "type" : "special", "price": {"s": 8, "m":10, "l":12} },
+      { "id": 21, "name": "le oege de ma", "type" : "special", "price": {"s": 8, "m":10, "l":12} },
+      { "id": 22, "name": "lasagne al ragù", "type" : "lasagna", "price": {"s": 8, "m":8, "l":8} },
+      { "id": 23, "name": "lasagne al pesto", "type" : "lasagna", "price": {"s": 8, "m":8, "l":8} }
+    ],
+  "sauces": [      
+        { "id": 1, "name": "pesto" },
+        { "id": 2, "name": "pesto al mortaio" },
+        { "id": 3, "name": "salsa di noci" },
+        { "id": 4, "name": "ragù" },
+        { "id": 5, "name": "ragù di nocciole vegan" },
+        { "id": 6, "name": "arrabbiata" },
+        { "id": 7, "name": "cacio e pepe" },
+        { "id": 8, "name": "burro e salvia" },
+        { "id": 9, "name": "bottarga" },
+        { "id": 10, "name": "pomodoro e basilico" },
+        { "id": 11, "name": "crema di nocciole" },
+        { "id": 12, "name": "noce vegan" },
+        { "id": 13, "name": "nocciole vegan" },
+        { "id": 14, "name": "sugo del giorno" }
+]
+};
+
+
+
+// Function to get a random item from an array
+function getRandomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+// Function to generate a random pasta and sauce pairing
+function prandomizePairing() {
+  const randomPasta = getRandomItem(data.pasta);   
+  const presultDiv = document.getElementById('p-result');
+  presultDiv.textContent = capitalizeFirstLetter(`${randomPasta.name}`);
+  if(randomPasta.type == "lasagna"){
+    document.getElementById("sauceDiv").hidden = true;
+    document.getElementById("p-randomizeButton").disabled = true;
+    document.getElementById("inlineRadio1").disabled = true;
+    document.getElementById("inlineRadio2").disabled = true;
+    document.getElementById("inlineRadio3").disabled = true;
+  }
+  let selectedSize = document.querySelector('input[name="inlineRadioOptions"]:checked').value;
+  let cost = randomPasta.price[selectedSize];
+
+  document.getElementById('price').innerText = `Costo: ${cost} €`
+}
+
+function srandomizePairing() {
+  const randomSauce = getRandomItem(data.sauces);  
+  const sresultDiv = document.getElementById('s-result');
+  sresultDiv.textContent =  capitalizeFirstLetter(`${randomSauce.name}`);
+}
+
+function capitalizeFirstLetter(val) {
+    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
+function reset(){
+    window.location.reload();
+}
+
+function atLeastOneRadio() {
+    let s = document.getElementById('inlineRadio1').checked;
+    let m = document.getElementById('inlineRadio2').checked;
+    let l = document.getElementById('inlineRadio3').checked;
+    if(s || m || l){
+        document.getElementById('p-randomizeButton').disabled = false;
+    }
+}
+
+
+
+// Add event listener to the button
+document.getElementById('p-randomizeButton').addEventListener('click', prandomizePairing);
+document.getElementById('s-randomizeButton').addEventListener('click', srandomizePairing);
+document.getElementById('reset').addEventListener('click', reset);
