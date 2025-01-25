@@ -27,20 +27,20 @@ const data = {
       { "id": 23, "name": "lasagne al pesto", "type" : "lasagna", "price": {"s": 8, "m":8, "l":8} }
     ],
   "sauces": [      
-        { "id": 1, "name": "pesto" },
-        { "id": 2, "name": "pesto al mortaio" },
-        { "id": 3, "name": "salsa di noci" },
-        { "id": 4, "name": "ragù" },
-        { "id": 5, "name": "ragù di nocciole vegan" },
-        { "id": 6, "name": "arrabbiata" },
-        { "id": 7, "name": "cacio e pepe" },
-        { "id": 8, "name": "burro e salvia" },
-        { "id": 9, "name": "bottarga" },
-        { "id": 10, "name": "pomodoro e basilico" },
-        { "id": 11, "name": "crema di nocciole" },
-        { "id": 12, "name": "noce vegan" },
-        { "id": 13, "name": "nocciole vegan" },
-        { "id": 14, "name": "sugo del giorno" }
+        { "id": 1, "name": "pesto", "prob": 0.8 },
+        { "id": 2, "name": "pesto al mortaio", "prob": 0.6 },
+        { "id": 3, "name": "salsa di noci", "prob": 0.6 },
+        { "id": 4, "name": "ragù", "prob": 0.8 },
+        { "id": 5, "name": "ragù di nocciole vegan", "prob": 0.2 },
+        { "id": 6, "name": "arrabbiata", "prob": 0.6 },
+        { "id": 7, "name": "cacio e pepe", "prob": 0.7 },
+        { "id": 8, "name": "burro e salvia", "prob": 0.6 },
+        { "id": 9, "name": "bottarga", "prob": 0.4 },
+        { "id": 10, "name": "pomodoro e basilico", "prob": 0.6 },
+        { "id": 11, "name": "crema di nocciole", "prob": 0.1 },
+        { "id": 12, "name": "noce vegan", "prob": 0.3 },
+        { "id": 13, "name": "nocciole vegan", "prob": 0.2 },
+        { "id": 14, "name": "sugo del giorno", "prob": 0.6 }
 ]
 };
 
@@ -49,6 +49,19 @@ const data = {
 // Function to get a random item from an array
 function getRandomItem(array) {
   return array[Math.floor(Math.random() * array.length)];
+}
+
+function getRandomWeightedItem(array){
+    const totalWeight = array.reduce((sum, item) => sum + item.prob, 0);
+    const random = Math.random() * totalWeight;
+    let accumulatedWeight = 0;
+
+    for (const item of array) {
+        accumulatedWeight += item.prob;
+        if (random < accumulatedWeight) {
+            return array[item.id -1];
+        }
+    }
 }
 
 // Function to generate a random pasta and sauce pairing
@@ -70,7 +83,7 @@ function prandomizePairing() {
 }
 
 function srandomizePairing() {
-  const randomSauce = getRandomItem(data.sauces);  
+  const randomSauce = getRandomWeightedItem(data.sauces);  
   const sresultDiv = document.getElementById('s-result');
   sresultDiv.textContent =  capitalizeFirstLetter(`${randomSauce.name}`);
 }
