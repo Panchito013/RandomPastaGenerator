@@ -24,6 +24,6 @@ body {
     height: 30px;
   }
   .btn-check:checked + .btn {
-    background-color: #007bff;
+    background-color: #DC3545;
     color: white;
   }
