@@ -126,6 +126,14 @@ function reset(){
     window.location.reload();
 }
 
+function setPriceFromSize(){
+    const pastaName = document.getElementById('p-result').innerHTML;
+    let pasta = getItemByName(pastaName, data.pasta);
+    let selectedSize = document.querySelector('input[name="inlineRadioOptions"]:checked').value;
+    let cost = pasta.price[selectedSize];
+    document.getElementById('price').innerText = `Costo: ${cost} €`
+}
+
 function atLeastOneRadio() {
     let s = document.getElementById('inlineRadio1').checked;
     let m = document.getElementById('inlineRadio2').checked;
