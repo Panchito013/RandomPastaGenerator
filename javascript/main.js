@@ -27,8 +27,8 @@ const data = {
       { "id": 23, "name": "lasagne al pesto", "type" : "lasagna", "price": {"s": 8, "m":8, "l":8} }
     ],
   "sauces": [      
-        { "id": 1, "name": "pesto", "prob": 0.8, "excludedPastaTypes": ["filled","fishy"]},
-        { "id": 2, "name": "pesto al mortaio", "prob": 0.6,"excludedPastaTypes": ["filled","fishy"] },
+        { "id": 1, "name": "pesto", "prob": 0.9, "excludedPastaTypes": ["filled","fishy"]},
+        { "id": 2, "name": "pesto al mortaio", "prob": 0.9,"excludedPastaTypes": ["filled","fishy"] },
         { "id": 3, "name": "salsa di noci", "prob": 0.6, "excludedPastaTypes": ["fishy"]},
         { "id": 4, "name": "ragù", "prob": 0.8, "excludedPastaTypes": ["fishy"]},
         { "id": 5, "name": "ragù di nocciole vegan", "prob": 0.2 },
@@ -85,21 +85,25 @@ function prandomizePairing() {
 
 }
 
+function validateExclusions(pasta, souceArrayExclusions){
+    for (ex in souceArrayExclusions){
+        if(pasta.type == souceArrayExclusions[ex]){
+            return false;
+        }
+    }
+    return true;
+}
+
 function srandomizePairing() {
     const pastaName = document.getElementById('p-result').innerHTML;
     let pasta = getItemByName(pastaName, data.pasta);
 
     let randomSauce = getRandomWeightedItem(data.sauces);  
   
-    if(randomSauce.excludedPastaTypes != undefined){
-        
-        for(exclusion in randomSauce.excludedPastaTypes){
-            if(pasta.type == randomSauce.excludedPastaTypes[exclusion]){
-                do{
-                    randomSauce =  getRandomWeightedItem(data.sauces); 
-                }while(pasta.type == randomSauce.excludedPastaTypes[exclusion])
-            }
-        }
+    if(randomSauce.excludedPastaTypes != undefined && !validateExclusions(pasta,randomSauce.excludedPastaTypes)){
+        do{
+            randomSauce =  getRandomWeightedItem(data.sauces); 
+        }while(!validateExclusions(pasta,randomSauce.excludedPastaTypes))
     }
 
   
