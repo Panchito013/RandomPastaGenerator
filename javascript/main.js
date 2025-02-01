@@ -27,20 +27,20 @@ const data = {
       { "id": 23, "name": "lasagne al pesto", "type" : "lasagna", "price": {"s": 8, "m":8, "l":8} }
     ],
   "sauces": [      
-        { "id": 1, "name": "pesto", "prob": 0.9, "excludedPastaTypes": ["filled","fishy"]},
-        { "id": 2, "name": "pesto al mortaio", "prob": 0.9,"excludedPastaTypes": ["filled","fishy"] },
-        { "id": 3, "name": "salsa di noci", "prob": 0.6, "excludedPastaTypes": ["fishy"]},
-        { "id": 4, "name": "ragù", "prob": 0.8, "excludedPastaTypes": ["fishy"]},
+        { "id": 1, "name": "pesto", "prob": 1.8, "excludedPastaTypes": ["filled","fishy"]},
+        { "id": 2, "name": "pesto al mortaio", "prob": 1.8,"excludedPastaTypes": ["filled","fishy"] },
+        { "id": 3, "name": "salsa di noci", "prob": 1.2, "excludedPastaTypes": ["fishy"]},
+        { "id": 4, "name": "ragù", "prob": 1.6, "excludedPastaTypes": ["fishy"]},
         { "id": 5, "name": "ragù di nocciole vegan", "prob": 0.2 },
-        { "id": 6, "name": "arrabbiata", "prob": 0.6 },
-        { "id": 7, "name": "cacio e pepe", "prob": 0.7,"excludedPastaTypes": ["fishy"] },
-        { "id": 8, "name": "burro e salvia", "prob": 0.6 },
+        { "id": 6, "name": "arrabbiata", "prob": 1.2 },
+        { "id": 7, "name": "cacio e pepe", "prob": 1.4,"excludedPastaTypes": ["fishy"] },
+        { "id": 8, "name": "burro e salvia", "prob": 1.2 },
         { "id": 9, "name": "bottarga", "prob": 0.4,"excludedPastaTypes": ["filled"] },
-        { "id": 10, "name": "pomodoro e basilico", "prob": 0.6 },
+        { "id": 10, "name": "pomodoro e basilico", "prob": 1.2 },
         { "id": 11, "name": "crema di nocciole", "prob": 0.1 },
         { "id": 12, "name": "noce vegan", "prob": 0.3 },
         { "id": 13, "name": "nocciole vegan", "prob": 0.2 },
-        { "id": 14, "name": "sugo del giorno", "prob": 0.6 }
+        { "id": 14, "name": "sugo del giorno", "prob": 1.2 }
 ]
 };
 
@@ -97,8 +97,16 @@ function validateExclusions(pasta, souceArrayExclusions){
 function srandomizePairing() {
     const pastaName = document.getElementById('p-result').innerHTML;
     let pasta = getItemByName(pastaName, data.pasta);
+    let isVegan = checkVegan();
+    let sauces = data.sauces;
 
-    let randomSauce = getRandomWeightedItem(data.sauces);  
+    if(!isVegan){
+        sauces = sauces.filter(sauce => !sauce.name.toLowerCase().includes("vegan"));
+    }
+
+
+    let randomSauce = getRandomWeightedItem(sauces);  
+
   
     if(randomSauce.excludedPastaTypes != undefined && !validateExclusions(pasta,randomSauce.excludedPastaTypes)){
         do{
@@ -141,6 +149,18 @@ function atLeastOneRadio() {
     if(s || m || l){
         document.getElementById('p-randomizeButton').disabled = false;
     }
+}
+
+function toggleVegan(){
+    var button = document.getElementById("veganToggle");
+    if(button.innerHTML == "Vegan Off")
+        document.getElementById("veganToggle").innerHTML = "Vegan On"
+    else
+        document.getElementById("veganToggle").innerHTML = "Vegan Off";
+}
+
+function checkVegan(){
+    return document.getElementById("veganToggle").innerHTML == "Vegan On" ?  true : false;
 }
 
 
